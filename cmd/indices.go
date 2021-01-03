@@ -16,25 +16,24 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/takenoko-gohan/nikon/internal/indices"
 )
 
 // indicesCmd represents the indices command
 var indicesCmd = &cobra.Command{
-	Use:   "indices",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "indices <http://localhost:9200>",
+	Short: "Command to get index list of target Elasticsearch",
+	Long: `Command to get index list of target Elasticsearch.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+If you do not specify the target,
+it will try to get the index list from "http: // localhost: 9200".`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("indices called")
-		indices.GetIndexList(args[0])
+		if len(args) > 0 {
+			indices.GetIndexList(args[0])
+		} else {
+			indices.GetIndexList("http://localhost:9200")
+		}
 	},
 }
 

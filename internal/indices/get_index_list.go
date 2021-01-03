@@ -4,9 +4,9 @@ Package indices  provides functions for getting index information.
 package indices
 
 import (
+	"bytes"
 	"fmt"
 	"log"
-	"bytes"
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
 )
@@ -23,7 +23,7 @@ func GetIndexList(addr string) {
 		log.Fatal(err)
 	}
 	indices := es.Cat.Indices
-	res, err := indices(indices.WithV(true))
+	res, err := indices(indices.WithH("index"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +31,7 @@ func GetIndexList(addr string) {
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(res.Body)
-	resutl := buf.String()
+	result := buf.String()
 
-	fmt.Println(resutl)
+	fmt.Println(result)
 }

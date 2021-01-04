@@ -44,8 +44,12 @@ The document is saved in a file in NDJSON structure.`,
 		if err != nil {
 			log.Fatal(err)
 		}
+		o, err := cmd.Flags().GetString("output")
+		if err != nil {
+			log.Fatal(err)
+		}
 		if len(args) > 0 {
-			dump.SavingIndex(h, args[0], s, t)
+			dump.SavingIndex(h, args[0], s, t, o)
 		} else {
 			fmt.Println("Please specify the target index.")
 			os.Exit(0)
@@ -68,4 +72,5 @@ func init() {
 	dumpCmd.Flags().StringP("host", "h", "http://localhost:9200", "Specify the target Elasticsearch")
 	dumpCmd.Flags().IntP("size", "s", 100, "Specify the number of items to be acquired at one time")
 	dumpCmd.Flags().IntP("scroll-time", "", 10, "Specify scroll time.The unit is minutes.")
+	dumpCmd.Flags().StringP("output", "o", "dump.json", "Specify the output file path.")
 }

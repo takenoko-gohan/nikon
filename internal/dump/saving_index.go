@@ -13,7 +13,7 @@ import (
 )
 
 // SavingIndex is a function that saves the target index to a file.
-func SavingIndex(addr string, iName string, size int, t int) {
+func SavingIndex(addr string, iName string, size int, t int, o string) {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			addr,
@@ -33,16 +33,15 @@ func SavingIndex(addr string, iName string, size int, t int) {
 	}
 
 	scrollID, docsData := getScrollID(es, iName, size, t)
-	for _, doc := range docsData {
-		fmt.Println(doc["index"])
-		fmt.Println(doc["doc"])
-	}
+	log.Println("got ", size, " documents from Elasticsearch.(offset: 0)")
+	saveDocToFile(o, docsData, true)
+	log.Println("saved ", size, " documents to a file.(offset: 0)")
 	for i := 0; i < cnt; i++ {
+		offset := (i + 1) * size
 		docsData = getDocsData(es, iName, scrollID, t)
-		for _, doc := range docsData {
-			fmt.Println(doc["index"])
-			fmt.Println(doc["doc"])
-		}
+		log.Println("got ", size, " documents from Elasticsearch.(offset: ", offset, ")")
+		saveDocToFile(o, docsData, false)
+		log.Println("saved ", size, " documents to a file.(offset: ", offset, ")")
 	}
 	deleteScrollID(es, scrollID)
 }

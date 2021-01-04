@@ -14,7 +14,7 @@ import (
 )
 
 // getScrollID is a function that gets scroll_id and the first document.
-func getScrollID(es *elasticsearch.Client, iName string, size int) (string, []map[string]string) {
+func getScrollID(es *elasticsearch.Client, iName string, size int, t int) (string, []map[string]string) {
 	var buf bytes.Buffer
 
 	query := map[string]interface{}{
@@ -29,11 +29,13 @@ func getScrollID(es *elasticsearch.Client, iName string, size int) (string, []ma
 		log.Fatal(err)
 	}
 
+	scrollT := t * 60000000000
+
 	res, err := es.Search(
 		es.Search.WithContext(context.Background()),
 		es.Search.WithIndex(iName),
 		es.Search.WithBody(&buf),
-		es.Search.WithScroll(time.Duration(60000000000)),
+		es.Search.WithScroll(time.Duration(scrollT)),
 		es.Search.WithPretty(),
 	)
 	if err != nil {

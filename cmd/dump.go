@@ -40,8 +40,12 @@ The document is saved in a file in NDJSON structure.`,
 		if err != nil {
 			log.Fatal(err)
 		}
+		t, err := cmd.Flags().GetInt("scroll-time")
+		if err != nil {
+			log.Fatal(err)
+		}
 		if len(args) > 0 {
-			dump.SavingIndex(h, args[0], s)
+			dump.SavingIndex(h, args[0], s, t)
 		} else {
 			fmt.Println("Please specify the target index.")
 			os.Exit(0)
@@ -63,4 +67,5 @@ func init() {
 	// dumpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	dumpCmd.Flags().StringP("host", "h", "http://localhost:9200", "Specify the target Elasticsearch")
 	dumpCmd.Flags().IntP("size", "s", 100, "Specify the number of items to be acquired at one time")
+	dumpCmd.Flags().IntP("scroll-time", "", 10, "Specify scroll time.The unit is minutes.")
 }

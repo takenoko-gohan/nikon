@@ -8,16 +8,23 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"strconv"
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
 )
 
 // getDocsData is a function that saves the document of the target index.
-func getDocsData(es *elasticsearch.Client, iName string, scrollID string) []map[string]string {
-	var buf bytes.Buffer
+func getDocsData(es *elasticsearch.Client, iName string, scrollID string, t int) []map[string]string {
+	var (
+		buf bytes.Buffer
+		scrollBuf bytes.Buffer
+	)
+
+	scrollBuf.WriteString(strconv.Itoa(t))
+	scrollBuf.WriteString("m")
 
 	query := map[string]interface{}{
-		"scroll":    "1m",
+		"scroll":    scrollBuf.String(),
 		"scroll_id": scrollID,
 	}
 

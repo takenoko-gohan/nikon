@@ -13,7 +13,7 @@ import (
 )
 
 // SavingIndex is a function that saves the target index to a file.
-func SavingIndex(addr string, iName string, size int) {
+func SavingIndex(addr string, iName string, size int, t int) {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			addr,
@@ -32,13 +32,13 @@ func SavingIndex(addr string, iName string, size int) {
 		os.Exit(0)
 	}
 
-	scrollID, docsData := getScrollID(es, iName, size)
+	scrollID, docsData := getScrollID(es, iName, size, t)
 	for _, doc := range docsData {
 		fmt.Println(doc["index"])
 		fmt.Println(doc["doc"])
 	}
 	for i := 0; i < cnt; i++ {
-		docsData = getDocsData(es, iName, scrollID)
+		docsData = getDocsData(es, iName, scrollID, t)
 		for _, doc := range docsData {
 			fmt.Println(doc["index"])
 			fmt.Println(doc["doc"])

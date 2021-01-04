@@ -16,7 +16,7 @@ import (
 // getDocsData is a function that saves the document of the target index.
 func getDocsData(es *elasticsearch.Client, iName string, scrollID string, t int) []map[string]string {
 	var (
-		buf bytes.Buffer
+		buf       bytes.Buffer
 		scrollBuf bytes.Buffer
 	)
 

@@ -25,9 +25,9 @@ var indicesCmd = &cobra.Command{
 	Use:   "indices <http://localhost:9200>",
 	Short: "Command to get index list of target Elasticsearch",
 	Long: `Command to get index list of target Elasticsearch.
-
 If you do not specify the target,
 it will try to get the index list from "http: // localhost: 9200".`,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			indices.GetIndexList(args[0])

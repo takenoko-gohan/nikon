@@ -16,22 +16,36 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/takenoko-gohan/nikon/internal/dump"
 )
 
 // dumpCmd represents the dump command
 var dumpCmd = &cobra.Command{
-	Use:   "dump",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "dump <target index name>",
+	Short: "Command to save the target index to a file.",
+	Long: `Command to save the target index to a file.
+The document is saved in a file in NDJSON structure.`,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		dump.SavingIndex("http://localhost:9200", "shakespeare")
+		h, err := cmd.Flags().GetString("host")
+		if err != nil {
+			log.Fatal(err)
+		}
+		s, err := cmd.Flags().GetInt("size")
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(args) > 0 {
+			dump.SavingIndex(h, args[0], s)
+		} else {
+			fmt.Println("Please specify the target index.")
+			os.Exit(0)
+		}
 	},
 }
 
@@ -47,4 +61,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// dumpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	dumpCmd.Flags().StringP("host", "h", "http://localhost:9200", "Specify the target Elasticsearch")
+	dumpCmd.Flags().IntP("size", "s", 100, "Specify the number of items to be acquired at one time")
 }

@@ -14,14 +14,14 @@ import (
 )
 
 // getScrollID is a function that gets scroll_id and the first document.
-func getScrollID(es *elasticsearch.Client, iName string) (string, []map[string]string) {
+func getScrollID(es *elasticsearch.Client, iName string, size int) (string, []map[string]string) {
 	var buf bytes.Buffer
 
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
 			"match_all": map[string]interface{}{},
 		},
-		"size": 10,
+		"size": size,
 	}
 
 	err := json.NewEncoder(&buf).Encode(query)

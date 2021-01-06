@@ -4,9 +4,10 @@ Package dump provides functions for saving indexes.
 package dump
 
 import (
-	"bytes"
 	"log"
 	"os"
+
+	"github.com/takenoko-gohan/nikon/internal/processing"
 )
 
 // saveDocToFile is a function that saves the passed document data a file.
@@ -18,14 +19,15 @@ func saveDocToFile(o string, docsData []map[string]string, isFirst bool) {
 		}
 		defer f.Close()
 
-		var buf bytes.Buffer
 		for _, doc := range docsData {
-			buf.WriteString(doc["index"])
-			buf.WriteString("\n")
-			buf.WriteString(doc["doc"])
-			buf.WriteString("\n")
+			str := processing.StringConcat([]interface{}{
+				doc["index"],
+				"\n",
+				doc["doc"],
+				"\n",
+			})
+			f.WriteString(str)
 		}
-		f.WriteString(buf.String())
 	} else {
 		f, err := os.OpenFile(o, os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
@@ -33,13 +35,14 @@ func saveDocToFile(o string, docsData []map[string]string, isFirst bool) {
 		}
 		defer f.Close()
 
-		var buf bytes.Buffer
 		for _, doc := range docsData {
-			buf.WriteString(doc["index"])
-			buf.WriteString("\n")
-			buf.WriteString(doc["doc"])
-			buf.WriteString("\n")
+			str := processing.StringConcat([]interface{}{
+				doc["index"],
+				"\n",
+				doc["doc"],
+				"\n",
+			})
+			f.WriteString(str)
 		}
-		f.WriteString(buf.String())
 	}
 }

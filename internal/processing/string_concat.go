@@ -1,3 +1,7 @@
+/*
+Package processing provides functions to 
+process the values passed in.
+*/
 package processing
 
 import (
@@ -5,6 +9,10 @@ import (
 	"strconv"
 )
 
+/*
+StringConcat is a function that concatenates the
+passed values and returns them as a string.
+*/
 func StringConcat(values []interface{}) string {
 	var buf bytes.Buffer
 

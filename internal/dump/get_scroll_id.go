@@ -8,13 +8,15 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"reflect"
 	"time"
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
+	"github.com/takenoko-gohan/nikon/internal/processing"
 )
 
 // getScrollID is a function that gets scroll_id and the first document.
-func getScrollID(es *elasticsearch.Client, iName string, size int, t int) (string, []map[string]string) {
+func getScrollID(es *elasticsearch.Client, iName string, size int, t int, out chan<- map[string]interface{}) (string, error) {
 	var buf bytes.Buffer
 
 	query := map[string]interface{}{
@@ -26,7 +28,7 @@ func getScrollID(es *elasticsearch.Client, iName string, size int, t int) (strin
 
 	err := json.NewEncoder(&buf).Encode(query)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	scrollT := t * 60000000000
@@ -39,60 +41,34 @@ func getScrollID(es *elasticsearch.Client, iName string, size int, t int) (strin
 		es.Search.WithPretty(),
 	)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	defer res.Body.Close()
 
 	if res.IsError() {
 		var e map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			log.Fatalf("Error parsing the response body: %s", err)
-		} else {
-			// Print the response status and error information.
-			log.Fatalf("[%s] %s: %s",
-				res.Status(),
-				e["error"].(map[string]interface{})["type"],
-				e["error"].(map[string]interface{})["reason"],
-			)
+			return "", err
 		}
 	}
 
 	var r map[string]interface{}
 	err = json.NewDecoder(res.Body).Decode(&r)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
+
+	cnt := reflect.ValueOf(r["hits"].(map[string]interface{})["hits"])
+	msg := processing.StringConcat([]interface{}{
+		"got ",
+		cnt.Len(),
+		" documents from Elasticsearch.(offset: 0)",
+	})
+	log.Println(msg)
+
+	out <- r
 
 	scrollID := r["_scroll_id"].(string)
 
-	var docsData []map[string]string
-
-	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		m := map[string]interface{}{
-			"index": map[string]interface{}{
-				"_index": hit.(map[string]interface{})["_index"],
-				"_type":  hit.(map[string]interface{})["_type"],
-				"_id":    hit.(map[string]interface{})["_id"],
-			},
-		}
-		index, err := json.Marshal(m)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		src := hit.(map[string]interface{})["_source"]
-		doc, err := json.Marshal(src)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		docData := map[string]string{
-			"index": string(index),
-			"doc":   string(doc),
-		}
-
-		docsData = append(docsData, docData)
-	}
-
-	return scrollID, docsData
+	return scrollID, nil
 }

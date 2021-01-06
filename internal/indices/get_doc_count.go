@@ -16,7 +16,6 @@ import (
 func GetDocCount(es *elasticsearch.Client, iName string) int {
 	count := es.Cat.Count
 	res, err := count(count.WithIndex(iName), count.WithH("count"))
-	//res, err := count(count.WithV(true))
 	if err != nil {
 		log.Fatal(err)
 	}

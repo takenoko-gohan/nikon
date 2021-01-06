@@ -10,6 +10,7 @@ import (
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
 	"github.com/takenoko-gohan/nikon/internal/indices"
+	"github.com/takenoko-gohan/nikon/internal/processing"
 )
 
 // SavingIndex is a function that saves the target index to a file.
@@ -33,15 +34,39 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 	}
 
 	scrollID, docsData := getScrollID(es, iName, size, t)
-	log.Println("got ", size, " documents from Elasticsearch.(offset: 0)")
+	msg := processing.StringConcat([]interface{}{
+		"got ",
+		size,
+		" documents from Elasticsearch.(offset: 0)",
+	})
+	log.Println(msg)
 	saveDocToFile(o, docsData, true)
-	log.Println("saved ", size, " documents to a file.(offset: 0)")
+	msg = processing.StringConcat([]interface{}{
+		"saved ",
+		size,
+		" documents to a file.(offset: 0)",
+	})
+	log.Println(msg)
 	for i := 0; i < cnt; i++ {
 		offset := (i + 1) * size
 		docsData = getDocsData(es, iName, scrollID, t)
-		log.Println("got ", size, " documents from Elasticsearch.(offset: ", offset, ")")
+		processing.StringConcat([]interface{}{
+			"got ",
+			size,
+			" documents from Elasticsearch.(offset: ",
+			offset,
+			")",
+		})
+		log.Println(msg)
 		saveDocToFile(o, docsData, false)
-		log.Println("saved ", size, " documents to a file.(offset: ", offset, ")")
+		msg = processing.StringConcat([]interface{}{
+			"saved ",
+			size,
+			" documents to a file.(offset: ",
+			offset,
+			")",
+		})
+		log.Println(msg)
 	}
 	deleteScrollID(es, scrollID)
 }

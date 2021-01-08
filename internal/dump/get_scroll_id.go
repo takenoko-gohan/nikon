@@ -15,6 +15,9 @@ import (
 	"github.com/takenoko-gohan/nikon/internal/processing"
 )
 
+const getScrollIDLogPrefix1 = "got "
+const getScrollIDLogPrefix2 = " documents from Elasticsearch."
+
 // getScrollID is a function that gets scroll_id and the first document.
 func getScrollID(es *elasticsearch.Client, iName string, size int, t int, out chan<- map[string]interface{}) (string, error) {
 	var buf bytes.Buffer
@@ -60,9 +63,9 @@ func getScrollID(es *elasticsearch.Client, iName string, size int, t int, out ch
 
 	cnt := reflect.ValueOf(r["hits"].(map[string]interface{})["hits"])
 	msg := processing.StringConcat([]interface{}{
-		"got ",
+		getScrollIDLogPrefix1,
 		cnt.Len(),
-		" documents from Elasticsearch.(offset: 0)",
+		getScrollIDLogPrefix2,
 	})
 	log.Println(msg)
 

@@ -14,6 +14,10 @@ import (
 	"github.com/takenoko-gohan/nikon/internal/processing"
 )
 
+const scrollPrefix = "m"
+const getResLogPrefix1 = "got "
+const getResLogPrefix2 = " documents from Elasticsearch."
+
 // getScrollRes is function to get the response from the Scroll API
 func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int, out chan<- map[string]interface{}) error {
 	var (
@@ -22,7 +26,7 @@ func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int
 
 	scroll := processing.StringConcat([]interface{}{
 		t,
-		"m",
+		scrollPrefix,
 	})
 
 	query := map[string]interface{}{
@@ -61,9 +65,9 @@ func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int
 
 	cnt := reflect.ValueOf(r["hits"].(map[string]interface{})["hits"])
 	msg := processing.StringConcat([]interface{}{
-		"got ",
+		getResLogPrefix1,
 		cnt.Len(),
-		" documents from Elasticsearch.",
+		getResLogPrefix2,
 	})
 	log.Println(msg)
 

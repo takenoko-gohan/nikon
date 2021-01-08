@@ -11,8 +11,8 @@ import (
 	"github.com/takenoko-gohan/nikon/internal/processing"
 )
 
-const prefixFirstMsg = "saved "
-const prefixLastMsg = " documents to a file."
+const saveLogPrefix1 = "saved "
+const saveLogPrefix2 = " documents to a file."
 
 // saveDocToFile is a function that saves the passed document data a file.
 func saveDocToFile(o string, in <-chan []map[string]string) error {
@@ -50,9 +50,9 @@ func saveDocToFile(o string, in <-chan []map[string]string) error {
 		}
 
 		msg := processing.StringConcat([]interface{}{
-			prefixFirstMsg,
+			saveLogPrefix1,
 			cnt,
-			prefixLastMsg,
+			saveLogPrefix2,
 		})
 		log.Println(msg)
 	}

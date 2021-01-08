@@ -17,7 +17,7 @@ import (
 // getScrollRes is function to get the response from the Scroll API
 func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int, out chan<- map[string]interface{}) error {
 	var (
-		buf       bytes.Buffer
+		buf bytes.Buffer
 	)
 
 	scroll := processing.StringConcat([]interface{}{

@@ -45,7 +45,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 
 	var eg errgroup.Group
 
-	chRes := make(chan map[string]interface{}, 10) 
+	chRes := make(chan map[string]interface{}, 10)
 	chDoc := make(chan []map[string]string, 10)
 
 	var scrollID string
@@ -81,7 +81,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 		return saveDocToFile(o, chDoc)
 	})
 
-	if err := eg.Wait(); err != nil{
+	if err := eg.Wait(); err != nil {
 		log.Fatal(err)
 	}
 

@@ -59,17 +59,28 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 		return nil
 	})
 
-	var mu1 sync.Mutex
-
-	for i := 0; i < cnt; i++ {
-		eg.Go(func() error {
-			mu1.Lock()
-			defer mu1.Unlock()
-			return getScrollRes(es, iName, scrollID, t, chRes)
-		})
+	if err := eg.Wait(); err != nil {
+		log.Fatal(err)
 	}
 
+	var mu1 sync.Mutex
+
 	eg.Go(func() error {
+		mu1.Lock()
+		defer mu1.Unlock()
+		defer close(chRes)
+		for i := 0; i < cnt; i++ {
+			err := getScrollRes(es, iName, scrollID, t, chRes)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	eg.Go(func() error {
+		defer close(chDoc)
 		return processing.GetDocsData(chRes, chDoc)
 	})
 
@@ -86,4 +97,6 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 	}
 
 	deleteScrollID(es, scrollID)
+
+	log.Println("The index was saved successfully.")
 }

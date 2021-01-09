@@ -6,6 +6,7 @@ package indices
 import (
 	"bytes"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
@@ -17,6 +18,7 @@ func GetDocCount(es *elasticsearch.Client, iName string) int {
 	count := es.Cat.Count
 	res, err := count(count.WithIndex(iName), count.WithH("count"))
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 	defer res.Body.Close()

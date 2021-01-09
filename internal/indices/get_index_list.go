@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"os"
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
 )
@@ -20,11 +21,13 @@ func GetIndexList(addr string) {
 	}
 	es, err := elasticsearch.NewClient(cfg)
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 	indices := es.Cat.Indices
 	res, err := indices(indices.WithH("index"))
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 	defer res.Body.Close()

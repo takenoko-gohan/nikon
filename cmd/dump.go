@@ -16,7 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -51,7 +50,8 @@ The document is saved in a file in NDJSON structure.`,
 		if len(args) > 0 {
 			dump.SavingIndex(h, args[0], s, t, o)
 		} else {
-			fmt.Println("Please specify the target index.")
+			log.SetOutput(os.Stdout)
+			log.Println("Please specify the target index.")
 			os.Exit(0)
 		}
 	},

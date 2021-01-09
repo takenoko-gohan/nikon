@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
+	"os"
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
 )
@@ -23,12 +24,14 @@ func deleteScrollID(es *elasticsearch.Client, scrollID string) {
 	}
 	err := json.NewEncoder(&buf).Encode(query)
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 	res, err := es.ClearScroll(
 		es.ClearScroll.WithBody(&buf),
 	)
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 	defer res.Body.Close()
@@ -36,9 +39,11 @@ func deleteScrollID(es *elasticsearch.Client, scrollID string) {
 	if res.IsError() {
 		var e map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
+			log.SetOutput(os.Stderr)
 			log.Fatalf("Error parsing the response body: %s", err)
 		} else {
 			// Print the response status and error information.
+			log.SetOutput(os.Stderr)
 			log.Fatalf("[%s] %s: %s",
 				res.Status(),
 				e["error"].(map[string]interface{})["type"],
@@ -46,4 +51,6 @@ func deleteScrollID(es *elasticsearch.Client, scrollID string) {
 			)
 		}
 	}
+
+	log.Println("The scroll id was successfully deleted.")
 }

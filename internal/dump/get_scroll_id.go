@@ -16,7 +16,7 @@ import (
 )
 
 const getScrollIDLogPrefix1 = "got "
-const getScrollIDLogPrefix2 = " documents from Elasticsearch.(offset: 0)"
+const getScrollIDLogPrefix2 = " documents from Elasticsearch."
 
 // getScrollID is a function that gets scroll_id and the first document.
 func getScrollID(es *elasticsearch.Client, iName string, size int, t int, out chan<- map[string]interface{}) (string, error) {

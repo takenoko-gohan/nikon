@@ -6,7 +6,6 @@ package dump
 import (
 	//"context"
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -20,8 +19,11 @@ import (
 
 // SavingIndex is a function that saves the target index to a file.
 func SavingIndex(addr string, iName string, size int, t int, o string) {
+	log.SetOutput(os.Stdout)
+
 	_, err := os.Stat(o)
 	if !os.IsNotExist(err) {
+		log.SetOutput(os.Stderr)
 		log.Println("The file already exists.")
 		os.Exit(0)
 	}
@@ -33,6 +35,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 	}
 	es, err := elasticsearch.NewClient(cfg)
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 
@@ -40,7 +43,8 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 	if cnt != 0 {
 		cnt = cnt/size + 1
 	} else {
-		fmt.Println("The document does not exist in the target index.")
+		log.SetOutput(os.Stderr)
+		log.Println("The document does not exist in the target index.")
 		os.Exit(0)
 	}
 
@@ -54,6 +58,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 
 	scrollID, err = getScrollID(es, iName, size, t, chRes)
 	if err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 
@@ -111,6 +116,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 	})
 
 	if err := eg.Wait(); err != nil {
+		log.SetOutput(os.Stderr)
 		log.Fatal(err)
 	}
 

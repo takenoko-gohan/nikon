@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 )
 
+// GetDocsData is a function that retrieves information used
+// by the Bulk API from Elasticsearch responses.
 func GetDocsData(in <-chan map[string]interface{}, out chan<- []map[string]string) error {
 	for r := range in {
 		var docsData []map[string]string

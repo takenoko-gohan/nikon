@@ -50,16 +50,8 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 
 	var scrollID string
 
-	eg.Go(func() error {
-		scrollID, err = getScrollID(es, iName, size, t, chRes)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	if err := eg.Wait(); err != nil {
+	scrollID, err = getScrollID(es, iName, size, t, chRes)
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -70,7 +62,8 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 		defer mu1.Unlock()
 		defer close(chRes)
 		for i := 0; i < cnt; i++ {
-			err := getScrollRes(es, iName, scrollID, t, chRes)
+			offset := (i + 1) * size
+			err := getScrollRes(es, iName, scrollID, t, offset, chRes)
 			if err != nil {
 				return err
 			}

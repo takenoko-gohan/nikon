@@ -13,6 +13,7 @@ import (
 
 const saveLogPrefix1 = "saved "
 const saveLogPrefix2 = " documents to a file."
+const saveLineFeedPrefix = "\n"
 
 // saveDocToFile is a function that saves the passed document data a file.
 func saveDocToFile(o string, in <-chan []map[string]string) error {
@@ -40,9 +41,9 @@ func saveDocToFile(o string, in <-chan []map[string]string) error {
 		for _, doc := range docs {
 			cnt++
 			buf.WriteString(doc["index"])
-			buf.WriteString("\n")
+			buf.WriteString(saveLineFeedPrefix)
 			buf.WriteString(doc["doc"])
-			buf.WriteString("\n")
+			buf.WriteString(saveLineFeedPrefix)
 		}
 		_, err := f.WriteString(buf.String())
 		if err != nil {

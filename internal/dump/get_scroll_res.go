@@ -16,11 +16,10 @@ import (
 
 const scrollPrefix = "m"
 const getResLogPrefix1 = "got "
-const getResLogPrefix2 = " documents from Elasticsearch.(offset: "
-const getResLogPrefix3 = ")"
+const getResLogPrefix2 = " documents from Elasticsearch."
 
 // getScrollRes is function to get the response from the Scroll API
-func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int, offset int, out chan<- map[string]interface{}) error {
+func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int, out chan<- map[string]interface{}, done chan<- struct{}) error {
 	var (
 		buf bytes.Buffer
 	)
@@ -65,12 +64,15 @@ func getScrollRes(es *elasticsearch.Client, iName string, scrollID string, t int
 	}
 
 	cnt := reflect.ValueOf(r["hits"].(map[string]interface{})["hits"])
+	if cnt.Len() == 0 {
+		done <- struct{}{}
+		return nil
+	}
+
 	msg := processing.StringConcat([]interface{}{
 		getResLogPrefix1,
 		cnt.Len(),
 		getResLogPrefix2,
-		offset,
-		getResLogPrefix3,
 	})
 	log.Println(msg)
 

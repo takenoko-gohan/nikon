@@ -38,7 +38,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 
 	cnt := indices.GetDocCount(es, iName)
 	if cnt != 0 {
-		cnt = cnt / size
+		cnt = cnt/size + 1
 	} else {
 		fmt.Println("The document does not exist in the target index.")
 		os.Exit(0)
@@ -47,6 +47,7 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 	eg, ctx := errgroup.WithContext(context.Background())
 
 	chRes := make(chan map[string]interface{}, 10)
+	chResDone := make(chan struct{})
 	chDoc := make(chan []map[string]string, 10)
 
 	var scrollID string
@@ -58,22 +59,30 @@ func SavingIndex(addr string, iName string, size int, t int, o string) {
 
 	var mu1 sync.Mutex
 
+	for i := 0; i < cnt; i++ {
+		eg.Go(func() error {
+			select {
+			case <-ctx.Done():
+				return nil
+			default:
+				mu1.Lock()
+				defer mu1.Unlock()
+				err := getScrollRes(es, iName, scrollID, t, chRes, chResDone)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			}
+		})
+	}
+
 	eg.Go(func() error {
 		select {
 		case <-ctx.Done():
 			return nil
-		default:
-			mu1.Lock()
-			defer mu1.Unlock()
-			defer close(chRes)
-			for i := 0; i < cnt; i++ {
-				offset := (i + 1) * size
-				err := getScrollRes(es, iName, scrollID, t, offset, chRes)
-				if err != nil {
-					return err
-				}
-			}
-
+		case <-chResDone:
+			close(chRes)
 			return nil
 		}
 	})

@@ -22,10 +22,10 @@ import (
 )
 
 // versionCmd represents the version command
-var versionCmd = &cobra.Command {
+var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Display the version.",
-	Long: `Display the version.`,
+	Long:  `Display the version.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := "v0.1.0"
 		fmt.Println(v)

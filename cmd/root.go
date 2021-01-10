@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"log"
+
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +25,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "nikon",
 	Short: "nikon is a CLI tool for saving Elasticsearch indices.",
-	Long: `nikon is a CLI tool for saving Elasticsearch indices.`,
+	Long:  `nikon is a CLI tool for saving Elasticsearch indices.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },

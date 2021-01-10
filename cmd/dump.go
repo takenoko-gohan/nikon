@@ -71,6 +71,6 @@ func init() {
 	// dumpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	dumpCmd.Flags().StringP("host", "h", "http://localhost:9200", "Specify the target Elasticsearch")
 	dumpCmd.Flags().IntP("size", "s", 100, "Specify the number of items to be acquired at one time")
-	dumpCmd.Flags().IntP("scroll-time", "", 10, "Specify scroll time.The unit is minutes.")
-	dumpCmd.Flags().StringP("output", "o", "dump.json", "Specify the output file path.")
+	dumpCmd.Flags().IntP("scroll-time", "", 10, "Specify scroll time.The unit is minutes")
+	dumpCmd.Flags().StringP("output", "o", "dump.json", "Specify the output file path")
 }
